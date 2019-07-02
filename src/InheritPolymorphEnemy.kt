@@ -6,6 +6,10 @@ interface Healable {
     fun heal(amount: Int)
 }
 
+interface Shooter{
+    fun reload()
+}
+
 abstract class Enemy(health: Int, var weapon: String) {
 
     var health: Int = 0
@@ -52,7 +56,7 @@ class Pikeman(health: Int, var armor: Int) : Enemy(health, "pike") {
     }
 }
 
-class Archer(health: Int, var arrowCount: Int) : Enemy(health, "bow") {
+class Archer(health: Int, var arrowCount: Int) : Enemy(health, "bow"), Shooter {
 
     init {
         println("Archer init called")
@@ -60,25 +64,30 @@ class Archer(health: Int, var arrowCount: Int) : Enemy(health, "bow") {
 
     override fun attack(enemy: Enemy) {
         if (arrowCount <= 0) {
-            println("no more arrows")
-        } else {
+            println("no more arrows, Reload Quiver")
+            reload()
+        } //removed else statement so that archer will attach after reloading.
             super.attack(enemy)
             arrowCount--
             println("arrows left = $arrowCount")
-        }
+
     }
 
     override fun run(){
         println("Archer running")
     }
 
-
+    override fun reload(){
+        if (arrowCount <= 0 ) {
+            println("reloading quiver")
+            arrowCount = 5
+        }
+    }
 }
 
-class Pistolero(health: Int, var bulletCount: Int = 0) : Enemy(health,"pistol"), Healable {
+class Pistolero(health: Int, var bulletCount: Int = 0) : Enemy(health,"pistol"), Healable, Shooter {
 
-
-    fun reload(){
+    override fun reload(){
         if(bulletCount <=0){
             println("reloading pistol")
             bulletCount = 6
@@ -97,7 +106,6 @@ class Pistolero(health: Int, var bulletCount: Int = 0) : Enemy(health,"pistol"),
         println("firing bullet at $enemy")
         bulletCount --
         println("bullets left = $bulletCount")
-
 
     }
 
